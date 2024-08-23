@@ -5,7 +5,8 @@ import { createSignal, createEffect, onCleanup, createMemo } from "solid-js";
 import Plyr from "plyr";
 
 // ANCHOR Hls
-import { MediaPlayer, supportsMediaSource } from "dashjs";
+import * as dashjs from "dashjs";
+const { MediaPlayer } = dashjs;
 
 // ANCHOR Types
 import { CreatePlyrProps, CreatePlyrResult } from "../createPlyr";
@@ -34,7 +35,7 @@ export default function createDashPlyr(
     window.dashjs = window.dashjs || {};
 
     if (plyrInstance) {
-      if (!supportsMediaSource) {
+      if (!dashjs.supportsMediaSource) {
         const newPlayer = new Plyr(".solid-plyr", options);
 
         plyrInstance.plyr = newPlayer;
