@@ -1,5 +1,5 @@
 {
-  "version": "1.0.10",
+  "version": "1.0.0",
   "types": "./dist/types/index.d.ts",
   "main": "./dist/cjs/production/index.jsx",
   "module": "./dist/esm/production/index.jsx",
@@ -23,7 +23,7 @@
     "solid",
     "solid-video"
   ],
-  "name": "solid-plyr",
+  "name": "@lidarbtc/solid-plyr",
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "^22.5.0",
