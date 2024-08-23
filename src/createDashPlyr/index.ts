@@ -1,42 +1,23 @@
 // ANCHOR Solid
-import {
-  createSignal,
-  createEffect,
-  onCleanup,
-  createMemo,
-} from 'solid-js';
+import { createSignal, createEffect, onCleanup, createMemo } from "solid-js";
 
 // ANCHOR Plyr
-import Plyr from 'plyr';
+import Plyr from "plyr";
 
 // ANCHOR Hls
-import Dash from 'dashjs';
+import { MediaPlayer, supportsMediaSource } from "dashjs";
 
 // ANCHOR Types
-import {
-  CreatePlyrProps,
-  CreatePlyrResult,
-} from '../createPlyr';
-import { HTMLPlyrVideoElement } from '../UncontrolledPlyr';
+import { CreatePlyrProps, CreatePlyrResult } from "../createPlyr";
+import { HTMLPlyrVideoElement } from "../UncontrolledPlyr";
 
 export default function createDashPlyr(
-  props: CreatePlyrProps
+  props: CreatePlyrProps,
 ): CreatePlyrResult {
-  const [
-    plyr,
-    setPlyr,
-  ] = createSignal<HTMLPlyrVideoElement>();
-  const [
-    dashPlyr,
-    setDashPlyr,
-  ] = createSignal<HTMLPlyrVideoElement>();
-  const dash = createMemo(() => (
-    Dash.MediaPlayer().create()
-  ));
-  const [
-    availableQualities,
-    setAvailableQualities,
-  ] = createSignal<number[]>();
+  const [plyr, setPlyr] = createSignal<HTMLPlyrVideoElement>();
+  const [dashPlyr, setDashPlyr] = createSignal<HTMLPlyrVideoElement>();
+  const dash = createMemo(() => MediaPlayer().create());
+  const [availableQualities, setAvailableQualities] = createSignal<number[]>();
 
   const options = props.options ?? {};
   const { source } = props;
@@ -53,8 +34,8 @@ export default function createDashPlyr(
     window.dashjs = window.dashjs || {};
 
     if (plyrInstance) {
-      if (!Dash.supportsMediaSource) {
-        const newPlayer = new Plyr('.solid-plyr', options);
+      if (!supportsMediaSource) {
+        const newPlayer = new Plyr(".solid-plyr", options);
 
         plyrInstance.plyr = newPlayer;
         setDashPlyr(plyrInstance);
@@ -65,29 +46,24 @@ export default function createDashPlyr(
           options?.autoplay ?? false,
         );
 
-        dashInstance.on(
-          'playbackMetaDataLoaded',
-          () => {
-            let span = document.querySelector(
-              ".plyr__menu__container [data-plyr='quality'][value='0'] span"
-            );
+        dashInstance.on("playbackMetaDataLoaded", () => {
+          let span = document.querySelector(
+            ".plyr__menu__container [data-plyr='quality'][value='0'] span",
+          );
 
-            if (span) {
-              span.innerHTML = 'AUTO';
-            }
-
-            const bitrateList = dashInstance
-              .getBitrateInfoListFor('video');
-            const availableLevels = bitrateList
-              .map(bitrate => bitrate.height);
-            const qualities = [0, ...availableLevels];
-
-            setAvailableQualities(qualities);
+          if (span) {
+            span.innerHTML = "AUTO";
           }
-        )
+
+          const bitrateList = dashInstance.getBitrateInfoListFor("video");
+          const availableLevels = bitrateList.map((bitrate) => bitrate.height);
+          const qualities = [0, ...availableLevels];
+
+          setAvailableQualities(qualities);
+        });
       }
     }
-  })
+  });
 
   createEffect(() => {
     const plyrInstance = plyr();
@@ -103,20 +79,20 @@ export default function createDashPlyr(
           forced: true,
           onChange: (newQuality) => {
             dashInstance.setQualityFor(
-              'video',
+              "video",
               newQuality === 0 ? -1 : qualityOptions.indexOf(newQuality) - 1,
               true,
             );
-          }
+          },
         },
         i18n: {
           qualityLabel: {
-            0: 'Auto',
+            0: "Auto",
           },
         },
-      }
+      };
 
-      const newPlayer = new Plyr('.solid-plyr', newOptions);
+      const newPlayer = new Plyr(".solid-plyr", newOptions);
 
       plyrInstance.plyr = newPlayer;
       setDashPlyr(plyrInstance);
@@ -130,4 +106,4 @@ export default function createDashPlyr(
   });
 
   return [dashPlyr, setPlyr];
-};
+}
