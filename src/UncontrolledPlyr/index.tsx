@@ -1,12 +1,11 @@
 // ANCHOR Solid
-import { JSX, Show } from 'solid-js';
+import { JSX, Show } from "solid-js";
 
 // ANCHOR Plyr
-import Plyr from 'plyr';
+import Plyr from "plyr";
 
 // ANCHOR Types
-export type HTMLPlyrVideoElement = HTMLVideoElement
-  & { plyr?: Plyr }
+export type HTMLPlyrVideoElement = HTMLVideoElement & { plyr?: Plyr };
 
 export interface UncontrolledPlyrProps
   extends JSX.VideoHTMLAttributes<HTMLPlyrVideoElement> {
@@ -22,21 +21,17 @@ export default function UncontrolledPlyr(
       <Show when={props.isLoading}>
         <Show
           when={props.fallback}
-          fallback={(
+          fallback={
             <div class="lion-spinner-container">
               <div class="lion-spinner lion-spinner-wave" />
             </div>
-          )}
+          }
         >
-          {(fallback) => fallback}
+          {props.fallback}
         </Show>
       </Show>
       <div>
-        <video
-          {...props}
-          ref={props.ref}
-          class="solid-plyr plyr"
-        />
+        <video {...props} ref={props.ref} class="solid-plyr plyr" />
       </div>
     </>
   );
